@@ -32,7 +32,7 @@ release {
 
     git {
         requireBranch.set('')
-//        pushToRemote.set('origin')
+        pushToRemote.set('')
         commitVersionFileOnly.set(false)
     }
 }

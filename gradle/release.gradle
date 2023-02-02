@@ -1,0 +1,30 @@
+
+release {
+    tagTemplate = (getCurrentGitBranch().startsWith("RC") ? "RC" : "hotfix") + "/" + version
+    versionPropertyFile = 'gradle.properties'
+    newVersionCommitMessage = 'New version commit: '
+    failOnCommitNeeded = true
+    failOnUnversionedFiles = true
+    failOnSnapshotDependencies = true
+
+    git {
+        requireBranch.set('')
+        pushToRemote.set('')
+        commitVersionFileOnly.set(false)
+    }
+}
+
+
+def getCurrentGitBranch() {
+    def gitBranch = "Unknown branch"
+    try {
+        def workingDir = new File("${project.projectDir}")
+        def result = 'git rev-parse --abbrev-ref HEAD'.execute(null, workingDir)
+        result.waitFor()
+        if (result.exitValue() == 0) {
+            gitBranch = result.text.trim()
+        }
+    } catch (ignored) {
+    }
+    return gitBranch
+}

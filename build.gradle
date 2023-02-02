@@ -1,9 +1,7 @@
-import java.util.regex.Matcher
 
 plugins {
     id 'java'
     id 'net.researchgate.release' version '3.0.2'
-
 }
 
 group 'com.griddynamics.release'
@@ -12,6 +10,7 @@ version = "${project.version}"
 repositories {
     mavenCentral()
 }
+apply from: file('gradle/release.gradle')
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
@@ -22,31 +21,3 @@ test {
     useJUnitPlatform()
 }
 
-release {
-    tagTemplate = (getCurrentGitBranch().startsWith("RC") ? "RC" : "hotfix") + "/" + version
-    versionPropertyFile = 'gradle.properties'
-    newVersionCommitMessage = 'New version commit: '
-    failOnCommitNeeded = true
-    failOnUnversionedFiles = true
-    failOnSnapshotDependencies = true
-
-    git {
-        requireBranch.set('')
-        pushToRemote.set('')
-        commitVersionFileOnly.set(false)
-    }
-}
-
-def getCurrentGitBranch() {
-    def gitBranch = "Unknown branch"
-    try {
-        def workingDir = new File("${project.projectDir}")
-        def result = 'git rev-parse --abbrev-ref HEAD'.execute(null, workingDir)
-        result.waitFor()
-        if (result.exitValue() == 0) {
-            gitBranch = result.text.trim()
-        }
-    } catch (ignored) {
-    }
-    return gitBranch
-}
